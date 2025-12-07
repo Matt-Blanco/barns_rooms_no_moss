@@ -7,7 +7,7 @@ const grids = [[]];
 let currentLine = grids[grids.length - 1];
 const gridSize = 86;
 let cursor = false;
-let zPoints = ["p1", "p5", "p6"]
+let zPoints = getZPoints();
 
 function setup() {
   createCanvas(width, height, WEBGL);
@@ -76,12 +76,24 @@ function keyPressed(e) {
   if (letterRules[key.toLowerCase()] !== undefined) {
     currentLine.push(new Grid(x, y, key.toLowerCase()))
   } else if (key === " ") {
-    const newZPoints = Array.apply(null, Array(Math.ceil(random(8)))).map((_, i) => `p${i + 1}`)
+    const newZPoints = getZPoints();
     zPoints = newZPoints
     currentLine.push(new Grid(x, y, ''))
+
+    push();
+
+    
+
+    pop();
+
+
   } else {
     currentLine.push(new Grid(x, y, ''))
   }
+}
+
+function getZPoints() {
+  return Array.apply(null, Array(Math.ceil(Math.random() * 8))).map((_, i) => `p${i + 1}`)
 }
 
 class Grid {
