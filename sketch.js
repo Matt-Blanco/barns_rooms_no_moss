@@ -75,23 +75,50 @@ function draw() {
   background(0);
 
   push();
-  translate(-width / 2, -height / 2); //translate back to 0,0
+  translate(-width / 2, -height / 2, 0); //translate back to 0,0
   for (let letterform of letterforms) {
     letterform.display();
+    letterform.move();
   }
   pop();
+
+  if (frameCount % 60 == 0) {
+    //select a random point.
+    let n = floor(random(letterforms[0].points.length)); 
+
+
+  }
 }
 
 class Letterform {
   constructor(points, anchor) {
     this.points = points;
 
-    this.x = [];
-    this.y = [];
+    this.origin_x = [];
+    this.origin_y = [];
+    this.origin_z = [];
+
+    this.current_x = [];
+    this.current_y = [];
+    this.current_z = [];
+
+    this.new_x = [];
+    this.new_y = [];
+    this.new_z = [];
 
     for (let i = 0; i < this.points.length; i++) {
-      this.x.push(this.points[i].x);
-      this.y.push(this.points[i].y);
+      //set all to defaults received in construcion-points.
+      this.origin_x.push(this.points[i].x);
+      this.origin_y.push(this.points[i].y);
+      this.origin_z.push(0);
+
+      this.current_x.push(this.points[i].x);
+      this.current_y.push(this.points[i].y);
+      this.current_z.push(0);
+
+      this.new_x.push(this.points[i].x);
+      this.new_y.push(this.points[i].y);
+      this.new_z.push(0);
     }
 
     this.anchor = {
@@ -101,14 +128,20 @@ class Letterform {
   }
 
   display() {
-    stroke (255); 
-    strokeWeight (2);
-    beginShape(TRIANGLE_STRIP);
-    for (let i = 0; i < this.points.length; i++) {
-      vertex(this.points[i].x, this.points[i].y); 
-      strokeWeight (5);
-      point(this.points[i].x, this.points[i].y); 
+    stroke(255);
+    strokeWeight(2);
+    // beginShape(POINTS);
+    for (let i = 0; i < this.points.length-1; i++) {
+      strokeWeight(10);
+      point(this.current_x[i], this.current_y[i], this.current_z[i]);
+
+      strokeWeight (2);
+      line(this.current_x[i], this.current_y[i], this.current_z[i], this.current_x[i + 1], this.current_y[i + 1], this.current_z[i + 1]);
     }
-    endShape();
+    // endShape();
+  }
+
+  move() {
+    this.current_z = lerp(this.current_z, this.new_z, 0.5); 
   }
 }
