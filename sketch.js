@@ -52,7 +52,7 @@ function draw() {
   if (frameCount % 25 === 0) {
     cursor = !cursor;
 
-    if (keyIsPressed && key === 'Backspace') {
+    if (keyIsPressed && key === "Backspace") {
       currentLine.pop();
       if (currentLine.length <= 0) {
         grids.pop();
@@ -67,12 +67,19 @@ function draw() {
   }
 
   orbitControl();
+  if (cursor) {
+    let cursorX = typeStartX + (gridSize + 5) * (1 + currentLine.length) + 10;
+    let cursorY = typeStartY + grids.length * gridSize;
+    stroke("black");
+    strokeWeight(1);
+    line(cursorX, cursorY, 0, cursorX, cursorY + gridSize, 0);
+  }
 }
 
 function keyPressed(e) {
-  e.preventDefault()
+  e.preventDefault();
 
-  currentLine = grids[grids.length - 1]
+  currentLine = grids[grids.length - 1];
 
   if (key === "Backspace") {
     currentLine.pop();
@@ -89,12 +96,12 @@ function keyPressed(e) {
   }
 
   let x = typeStartX + (gridSize + 5) * (1 + currentLine.length);
-  let y = typeStartY + (grids.length * gridSize);
-  if (x >= ((width / 2) - (gridSize * 2))) {
+  let y = typeStartY + grids.length * gridSize;
+  if (x >= width / 2 - gridSize * 2) {
     grids.push([]);
     currentLine = grids[grids.length - 1];
     x = typeStartX + (gridSize + 5) * (1 + currentLine.length);
-    y += gridSize
+    y += gridSize;
   }
 
   if (letterRules[key.toLowerCase()] !== undefined) {
@@ -154,13 +161,13 @@ class Grid {
         let y = this.startY + ((rows + 1) * inc)
         let z = 0;
 
-        if (zPoints.some(p => p === pointLabel)) {
-          z = (gridSize);
+        if (zPoints.some((p) => p === pointLabel)) {
+          z = gridSize;
         }
 
-        const p = new Point(x, y, z, pointLabel)
+        const p = new Point(x, y, z, pointLabel);
         this.points.push(p);
-        count++
+        count++;
       }
     }
   }
@@ -180,14 +187,15 @@ class Grid {
     fill("black");
 
     if (this.letter !== "") {
-      const rules = letterRules[`${this.letter}`]
+      const rules = letterRules[`${this.letter}`];
       for (let rule of rules) {
-        const startPoint = this.points.find(p => p.label === rule.start)
-        const endPoint = this.points.find(p => p.label === rule.end)
+        const startPoint = this.points.find((p) => p.label === rule.start);
+        const endPoint = this.points.find((p) => p.label === rule.end);
 
         strokeWeight(1);
         stroke("black");
-        line(startPoint.x, startPoint.y, startPoint.z, endPoint.x, endPoint.y, endPoint.z)
+        // line(startPoint.x, startPoint.y, startPoint.z, endPoint.x, endPoint.y, endPoint.z)
+        line(startPoint.x, startPoint.y, endPoint.x, endPoint.y); // no z axis for debugging.
       }
     }
     pop();
@@ -208,4 +216,3 @@ class Point {
     this.label = label;
   }
 }
-
