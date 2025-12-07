@@ -76,13 +76,12 @@ function keyPressed(e) {
   if (letterRules[key.toLowerCase()] !== undefined) {
     currentLine.push(new Grid(x, y, key.toLowerCase()))
   } else if (key === " ") {
-    const newZPoints = getZPoints();
-    zPoints = newZPoints
+    zPoints = getZPoints();
     currentLine.push(new Grid(x, y, ''))
 
     push();
 
-    
+
 
     pop();
 
@@ -93,7 +92,7 @@ function keyPressed(e) {
 }
 
 function getZPoints() {
-  return Array.apply(null, Array(Math.ceil(Math.random() * 8))).map((_, i) => `p${i + 1}`)
+  return Array.apply(null, Array(Math.ceil(Math.random() * 8))).map((_, i) => `p${Math.floor(Math.random() * 9)}`)
 }
 
 class Grid {
