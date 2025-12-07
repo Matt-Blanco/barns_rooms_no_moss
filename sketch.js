@@ -4,8 +4,9 @@ const height = window.innerHeight;
 const typeStartX = -(width / 2);
 const typeStartY = -(height / 2);
 const grids = [[]];
-const currentLine = grids[grids.length - 1];
+let currentLine = grids[grids.length - 1];
 const gridSize = 86;
+let cursor = false;
 let zPoints = ["p1", "p5", "p6"]
 
 
@@ -123,8 +124,10 @@ const letterRules = {
     { start: "p6", end: "p9" },
   ],
   j: [
-    { start: "p2", end: "p5" },
-    { start: "p5", end: "p8" },
+    { start: "p2", end: "p3" },
+    { start: "p3", end: "p6" },
+    { start: "p6", end: "p9" },
+    { start: "p9", end: "p8" },
     { start: "p7", end: "p8" },
     { start: "p4", end: "p7" },
   ]
@@ -138,12 +141,24 @@ function draw() {
   background("#fff");
 
   grids.forEach(grid => grid.forEach(line => line.draw()));
+
+  if (frameCount % 25 === 0) {
+    cursor = !cursor;
+  }
+
+  if (cursor) {
+    let cursorX = typeStartX + ((gridSize) + 5) * (1 + currentLine.length) + 10;
+    let cursorY = typeStartY + (grids.length * gridSize);
+    stroke("black");
+    strokeWeight(1);
+    line(cursorX, cursorY, 0, cursorX, cursorY + gridSize, 0);
+  }
 }
 
 function keyPressed(e) {
   e.preventDefault()
 
-  let currentLine = grids[grids.length - 1]
+  currentLine = grids[grids.length - 1]
 
   if (key === "Backspace") {
     currentLine.pop();
@@ -154,6 +169,8 @@ function keyPressed(e) {
     if (grids.length <= 0) {
       grids.push([]);
     }
+
+    currentLine = grids[grids.length - 1];
     return;
   }
 
