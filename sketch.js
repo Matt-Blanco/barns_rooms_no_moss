@@ -4,20 +4,50 @@ const height = window.innerHeight;
 const typeStartX = -(width / 2);
 const typeStartY = -(height / 2);
 const grids = [[]];
-let currentLine = grids[grids.length - 1];
 const gridSize = 86;
+const angleInc = 90;
+
+let currentLine = grids[grids.length - 1];
 let cursor = false;
 let zPoints = getZPoints();
+let camera;
+
+let canvasAngle = 0;
+let axis = 0;
+let yAngle = 0;
+let xAngle = 0;
+
+
+let cursorX = typeStartX + ((gridSize) + 5) * (1 + currentLine.length) + 10;
+let cursorY = typeStartY + (grids.length * gridSize);
+
 
 function setup() {
   createCanvas(width, height, WEBGL);
+
+  camera = createCamera();
+
+  // Set the angle mode in degrees
+  angleMode(DEGREES);
 }
 
 function draw() {
   background("#fff");
-  orbitControl();
+
+  if (cursor) {
+    // cursorX = typeStartX + ((gridSize) + 5) * (1 + currentLine.length) + 10;
+    // cursorY = typeStartY + (grids.length * gridSize);
+    stroke("black");
+    strokeWeight(1);
+    line(cursorX, cursorY, 0, cursorX, cursorY + gridSize, 0);
+  }
+
+  push();
+  rotateX(xAngle);
+  rotateY(yAngle);
 
   grids.forEach(grid => grid.forEach(line => line.draw()));
+  pop();
 
   if (frameCount % 25 === 0) {
     cursor = !cursor;
@@ -36,13 +66,7 @@ function draw() {
     }
   }
 
-  if (cursor) {
-    let cursorX = typeStartX + ((gridSize) + 5) * (1 + currentLine.length) + 10;
-    let cursorY = typeStartY + (grids.length * gridSize);
-    stroke("black");
-    strokeWeight(1);
-    line(cursorX, cursorY, 0, cursorX, cursorY + gridSize, 0);
-  }
+  orbitControl();
 }
 
 function keyPressed(e) {
@@ -74,20 +98,31 @@ function keyPressed(e) {
   }
 
   if (letterRules[key.toLowerCase()] !== undefined) {
-    currentLine.push(new Grid(x, y, key.toLowerCase()))
+    currentLine.push(new Grid(x, y, axis, key.toLowerCase()))
   } else if (key === " ") {
+    canvasAngle += angleInc;
     zPoints = getZPoints();
-    currentLine.push(new Grid(x, y, ''))
+    axis = random(3);
 
-    push();
+    // Moddify the x and y point based on the type of rotation
+    x = x * cos(canvasAngle) - y * sin(canvasAngle);
+    y = x * sin(canvasAngle) + y * cos(canvasAngle);
 
+    cursorX = x + 5;
+    cursorY = y + 5;
 
+    currentLine.push(new Grid(x, y, axis, ''))
 
-    pop();
+    // yAngle += angleInc;
 
+    if (axis < 1) {
+      xAngle += angleInc;
+    } else if (axis < 2) {
+      yAngle += angleInc;
+    }
 
   } else {
-    currentLine.push(new Grid(x, y, ''))
+    currentLine.push(new Grid(x, y, axis, ''))
   }
 }
 
@@ -101,13 +136,14 @@ class Grid {
   startY;
   letter = "";
   points = [];
+  axis;
 
-  constructor(startX, startY, letter, size = gridSize) {
+  constructor(startX, startY, axis, letter, size = gridSize) {
     this.startX = startX;
     this.startY = startY;
     this.size = size;
-
     this.letter = letter
+    this.axis = axis;
 
     let count = 1;
     const inc = this.size / 3;
@@ -116,7 +152,6 @@ class Grid {
         let pointLabel = `p${count}`;
         let x = this.startX + ((col + 1) * inc)
         let y = this.startY + ((rows + 1) * inc)
-
         let z = 0;
 
         if (zPoints.some(p => p === pointLabel)) {
@@ -131,6 +166,16 @@ class Grid {
   }
 
   draw() {
+    push();
+    if (axis > 0) {
+      if (this.axis < 1) {
+        rotateX(angleInc);
+      }
+      else if (this.axis < 2) {
+        rotateY(angleInc);
+      }
+    }
+
     noStroke();
     fill("black");
 
@@ -145,6 +190,7 @@ class Grid {
         line(startPoint.x, startPoint.y, startPoint.z, endPoint.x, endPoint.y, endPoint.z)
       }
     }
+    pop();
   }
 }
 
