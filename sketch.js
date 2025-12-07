@@ -145,6 +145,19 @@ function draw() {
 
   if (frameCount % 25 === 0) {
     cursor = !cursor;
+
+    if (keyIsPressed && key === 'Backspace') {
+      currentLine.pop();
+      if (currentLine.length <= 0) {
+        grids.pop();
+      }
+
+      if (grids.length <= 0) {
+        grids.push([]);
+      }
+
+      currentLine = grids[grids.length - 1];
+    }
   }
 
   if (cursor) {
