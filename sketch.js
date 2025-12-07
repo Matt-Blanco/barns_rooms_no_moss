@@ -86,7 +86,7 @@ function draw() {
     //select a random point.
     let n = floor(random(letterforms[0].points.length)); 
 
-
+    letterforms[0].new_z[n] = random(-100,100); 
   }
 }
 
@@ -142,6 +142,8 @@ class Letterform {
   }
 
   move() {
-    this.current_z = lerp(this.current_z, this.new_z, 0.5); 
+    for (let i = 0; i < this.current_z.length; i++) {
+      this.current_z[i] = lerp(this.current_z[i], this.new_z[i], 0.1);
+    }
   }
 }
