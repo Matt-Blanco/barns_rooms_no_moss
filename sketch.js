@@ -7,7 +7,7 @@ const grids = [[]];
 let currentLine = grids[grids.length - 1];
 const gridSize = 42;
 let cursor = false;
-let zPoints = ["p1", "p5", "p6"]
+let zPoints = ["p1", "p5", "p6"];
 
 function setup() {
   createCanvas(width, height, WEBGL);
@@ -17,12 +17,12 @@ function draw() {
   background("#fff");
   orbitControl();
 
-  grids.forEach(grid => grid.forEach(line => line.draw()));
+  grids.forEach((grid) => grid.forEach((line) => line.draw()));
 
   if (frameCount % 25 === 0) {
     cursor = !cursor;
 
-    if (keyIsPressed && key === 'Backspace') {
+    if (keyIsPressed && key === "Backspace") {
       currentLine.pop();
       if (currentLine.length <= 0) {
         grids.pop();
@@ -37,8 +37,8 @@ function draw() {
   }
 
   if (cursor) {
-    let cursorX = typeStartX + ((gridSize) + 5) * (1 + currentLine.length) + 10;
-    let cursorY = typeStartY + (grids.length * gridSize);
+    let cursorX = typeStartX + (gridSize + 5) * (1 + currentLine.length) + 10;
+    let cursorY = typeStartY + grids.length * gridSize;
     stroke("black");
     strokeWeight(1);
     line(cursorX, cursorY, 0, cursorX, cursorY + gridSize, 0);
@@ -46,9 +46,9 @@ function draw() {
 }
 
 function keyPressed(e) {
-  e.preventDefault()
+  e.preventDefault();
 
-  currentLine = grids[grids.length - 1]
+  currentLine = grids[grids.length - 1];
 
   if (key === "Backspace") {
     currentLine.pop();
@@ -65,22 +65,22 @@ function keyPressed(e) {
   }
 
   let x = typeStartX + (gridSize + 5) * (1 + currentLine.length);
-  let y = typeStartY + (grids.length * gridSize);
-  if (x >= ((width / 2) - (gridSize * 2))) {
+  let y = typeStartY + grids.length * gridSize;
+  if (x >= width / 2 - gridSize * 2) {
     grids.push([]);
     currentLine = grids[grids.length - 1];
     x = typeStartX + (gridSize + 5) * (1 + currentLine.length);
-    y += gridSize
+    y += gridSize;
   }
 
   if (letterRules[key.toLowerCase()] !== undefined) {
-    currentLine.push(new Grid(x, y, key.toLowerCase()))
+    currentLine.push(new Grid(x, y, key.toLowerCase()));
   } else if (key === " ") {
-    const newZPoints = Array.apply(null, Array(Math.ceil(random(8)))).map((_, i) => `p${Math.floor(random(9))}`)
-    zPoints = newZPoints
-    currentLine.push(new Grid(x, y, ''))
+    const newZPoints = Array.apply(null, Array(Math.ceil(random(8)))).map((_, i) => `p${Math.floor(random(9))}`);
+    zPoints = newZPoints;
+    currentLine.push(new Grid(x, y, ""));
   } else {
-    currentLine.push(new Grid(x, y, ''))
+    currentLine.push(new Grid(x, y, ""));
   }
 }
 
@@ -96,25 +96,25 @@ class Grid {
     this.startY = startY;
     this.size = size;
 
-    this.letter = letter
+    this.letter = letter;
 
     let count = 1;
     const inc = this.size / 3;
     for (let rows = 0; rows < 3; rows++) {
       for (let col = 0; col < 3; col++) {
         let pointLabel = `p${count}`;
-        let x = this.startX + ((col + 1) * inc)
-        let y = this.startY + ((rows + 1) * inc)
+        let x = this.startX + (col + 1) * inc;
+        let y = this.startY + (rows + 1) * inc;
 
         let z = 0;
 
-        if (zPoints.some(p => p === pointLabel)) {
-          z = (gridSize);
+        if (zPoints.some((p) => p === pointLabel)) {
+          z = gridSize;
         }
 
-        const p = new Point(x, y, z, pointLabel)
+        const p = new Point(x, y, z, pointLabel);
         this.points.push(p);
-        count++
+        count++;
       }
     }
   }
@@ -124,7 +124,7 @@ class Grid {
     fill("black");
 
     if (this.letter !== "") {
-      const rules = letterRules[`${this.letter}`]
+      const rules = letterRules[`${this.letter}`];
       for (let rule of rules) {
         const startPoint = this.points.find((p) => p.label === rule.start);
         const endPoint = this.points.find((p) => p.label === rule.end);
@@ -132,7 +132,7 @@ class Grid {
         strokeWeight(1);
         stroke("black");
         // line(startPoint.x, startPoint.y, startPoint.z, endPoint.x, endPoint.y, endPoint.z)
-        line(startPoint.x, startPoint.y, endPoint.x, endPoint.y) // no z axis for debugging.
+        line(startPoint.x, startPoint.y, endPoint.x, endPoint.y); // no z axis for debugging.
       }
     }
   }
@@ -152,4 +152,3 @@ class Point {
     this.label = label;
   }
 }
-
