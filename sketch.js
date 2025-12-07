@@ -76,7 +76,7 @@ function keyPressed(e) {
   if (letterRules[key.toLowerCase()] !== undefined) {
     currentLine.push(new Grid(x, y, key.toLowerCase()))
   } else if (key === " ") {
-    const newZPoints = Array.apply(null, Array(Math.ceil(random(8)))).map((_, i) => `p${i + 1}`)
+    const newZPoints = Array.apply(null, Array(Math.ceil(random(8)))).map((_, i) => `p${Math.floor(random(9))}`)
     zPoints = newZPoints
     currentLine.push(new Grid(x, y, ''))
   } else {
