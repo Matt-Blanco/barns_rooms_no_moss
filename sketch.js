@@ -1,37 +1,112 @@
-const typeStartX = 15;
-const typeStartY = 15;
-const grids = [];
+const margin = 5;
+const currentLine = 1;
+const width = window.innerWidth;
+const height = window.innerHeight;
+const typeStartX = -(width / 2);
+const typeStartY = -(height / 2);
+const grids = [[]];
 const gridSize = 90;
+let zPoints = ["p1", "p5", "p6"]
 
 
 const letterRules = {
   m: [
+    { start: "p1", end: "p2" },
+    { start: "p1", end: "p4" },
+    { start: "p2", end: "p3" },
+    { start: "p2", end: "p5" },
+    { start: "p3", end: "p6" },
+    { start: "p4", end: "p7" },
+    { start: "p5", end: "p8" },
+    { start: "p6", end: "p9" },
+  ],
+  o: [
+    { start: "p1", end: "p2" },
+    { start: "p2", end: "p3" },
+    { start: "p4", end: "p1" },
+    { start: "p4", end: "p7" },
+    { start: "p6", end: "p3" },
+    { start: "p6", end: "p9" },
+    { start: "p7", end: "p8" },
+    { start: "p8", end: "p9" }
+  ],
+  a: [
+    { start: "p1", end: "p2" },
+    { start: "p2", end: "p3" },
+    { start: "p3", end: "p6" },
     { start: "p4", end: "p5" },
     { start: "p4", end: "p7" },
     { start: "p5", end: "p6" },
-    { start: "p5", end: "p8" },
-    { start: "p6", end: "p9" }
-  ]
+    { start: "p7", end: "p8" },
+    { start: "p8", end: "p9" },
+    { start: "p9", end: "p6" },
+  ],
+  b: [
+    { start: "p1", end: "p2" },
+    { start: "p2", end: "p3" },
+    { start: "p3", end: "p6" },
+    { start: "p1", end: "p4" },
+    { start: "p1", end: "p4" },
+    { start: "p4", end: "p5" },
+    { start: "p5", end: "p6" },
+    { start: "p4", end: "p7" },
+    { start: "p2", end: "p3" },
+    { start: "p6", end: "p9" },
+    { start: "p7", end: "p8" },
+    { start: "p8", end: "p9" },
+  ],
+  r: [
+    { start: "p1", end: "p2" },
+    { start: "p2", end: "p3" },
+    { start: "p1", end: "p4" },
+    { start: "p4", end: "p7" },
+  ],
 }
 
 function setup() {
-  createCanvas(1000, 1000);
+  createCanvas(width, height, WEBGL);
 }
 
 function draw() {
-  background("white");
+  background("gray");
 
-  grids.forEach(grid => grid.draw());
+  grids.forEach(grid => grid.forEach(line => line.draw()));
 }
 
 function keyPressed(e) {
   e.preventDefault()
-  if (key.toLowerCase() === 'm') {
-    grids.push(new Grid(typeStartX + (gridSize + 5) * (1 + grids.length), typeStartY, key))
-  } else if (key === "Backspace") {
-    grids.pop();
+
+  let currentLine = grids[grids.length - 1]
+
+  if (key === "Backspace") {
+    currentLine.pop();
+    if (currentLine.length <= 0) {
+      grids.pop();
+    }
+
+    if (grids.length <= 0) {
+      grids.push([]);
+    }
+    return;
+  }
+
+  let x = typeStartX + (gridSize + 5) * (1 + currentLine.length);
+  let y = typeStartY + (grids.length * gridSize);
+  if (x >= ((width / 2) - (gridSize * 2))) {
+    grids.push([]);
+    currentLine = grids[grids.length - 1];
+    x = typeStartX + (gridSize + 5) * (1 + currentLine.length);
+    y += gridSize
+  }
+
+  if (letterRules[key.toLowerCase()] !== undefined) {
+    currentLine.push(new Grid(x, y, key.toLowerCase()))
+  } else if (key === " ") {
+    const newZPoints = Array.apply(null, Array(Math.ceil(random(8)))).map((_, i) => `p${i + 1}`)
+    zPoints = newZPoints
+    currentLine.push(new Grid(x, y, ''))
   } else {
-    grids.push(new Grid(typeStartX + (gridSize + 5) * (1 + grids.length), typeStartY, ''))
+    currentLine.push(new Grid(x, y, ''))
   }
 }
 
@@ -53,16 +128,22 @@ class Grid {
     const inc = this.size / 3;
     for (let rows = 0; rows < 3; rows++) {
       for (let col = 0; col < 3; col++) {
+        let pointLabel = `p${count}`;
         let x = this.startX + ((col + 1) * inc)
         let y = this.startY + ((rows + 1) * inc)
 
-        const p = new Point(x, y, `p${count}`)
+        let z = 0;
+
+        if (zPoints.some(p => p === pointLabel)) {
+          z = (gridSize);
+        }
+
+        const p = new Point(x, y, z, pointLabel)
         this.points.push(p);
         count++
       }
     }
   }
-
 
   draw() {
     noStroke();
@@ -77,7 +158,7 @@ class Grid {
 
         strokeWeight(1);
         stroke("black");
-        line(startPoint.x, startPoint.y, endPoint.x, endPoint.y)
+        line(startPoint.x, startPoint.y, startPoint.z, endPoint.x, endPoint.y, endPoint.z)
       }
     }
   }
@@ -87,11 +168,13 @@ const radius = 2;
 class Point {
   x;
   y;
+  z;
   label;
 
-  constructor(x, y, label) {
+  constructor(x, y, z, label) {
     this.x = x;
     this.y = y;
+    this.z = z;
     this.label = label;
   }
 
