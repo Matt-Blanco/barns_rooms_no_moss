@@ -1,11 +1,11 @@
 const margin = 5;
-const currentLine = 1;
 const width = window.innerWidth;
 const height = window.innerHeight;
 const typeStartX = -(width / 2);
 const typeStartY = -(height / 2);
 const grids = [[]];
-const gridSize = 90;
+const currentLine = grids[grids.length - 1];
+const gridSize = 86;
 let zPoints = ["p1", "p5", "p6"]
 
 
@@ -61,6 +61,73 @@ const letterRules = {
     { start: "p1", end: "p4" },
     { start: "p4", end: "p7" },
   ],
+  n: [
+    { start: "p1", end: "p2" },
+    { start: "p2", end: "p3" },
+    { start: "p1", end: "p4" },
+    { start: "p3", end: "p6" },
+    { start: "p4", end: "p7" },
+    { start: "p6", end: "p9" },
+  ],
+  s: [
+    { start: "p1", end: "p2" },
+    { start: "p1", end: "p4" },
+    { start: "p2", end: "p3" },
+    { start: "p4", end: "p5" },
+    { start: "p5", end: "p6" },
+    { start: "p6", end: "p9" },
+    { start: "p8", end: "p9" },
+    { start: "p8", end: "p7" },
+  ],
+  t: [
+    { start: "p1", end: "p2" },
+    { start: "p2", end: "p3" },
+    { start: "p2", end: "p5" },
+    { start: "p5", end: "p8" },
+    { start: "p8", end: "p9" },
+  ],
+  p: [
+    { start: "p1", end: "p2" },
+    { start: "p1", end: "p4" },
+    { start: "p3", end: "p6" },
+    { start: "p2", end: "p3" },
+    { start: "p4", end: "p5" },
+    { start: "p5", end: "p6" },
+    { start: "p4", end: "p7" },
+  ],
+  e: [
+    { start: "p1", end: "p2" },
+    { start: "p1", end: "p4" },
+    { start: "p2", end: "p3" },
+    { start: "p3", end: "p6" },
+    { start: "p4", end: "p7" },
+    { start: "p4", end: "p5" },
+    { start: "p5", end: "p6" },
+    { start: "p7", end: "p8" },
+    { start: "p8", end: "p9" },
+  ],
+  d: [
+    { start: "p1", end: "p2" },
+    { start: "p2", end: "p6" },
+    { start: "p1", end: "p4" },
+    { start: "p4", end: "p7" },
+    { start: "p7", end: "p8" },
+    { start: "p8", end: "p6" },
+  ],
+  u: [
+    { start: "p1", end: "p4" },
+    { start: "p4", end: "p7" },
+    { start: "p7", end: "p8" },
+    { start: "p8", end: "p9" },
+    { start: "p3", end: "p6" },
+    { start: "p6", end: "p9" },
+  ],
+  j: [
+    { start: "p2", end: "p5" },
+    { start: "p5", end: "p8" },
+    { start: "p7", end: "p8" },
+    { start: "p4", end: "p7" },
+  ]
 }
 
 function setup() {
@@ -68,7 +135,7 @@ function setup() {
 }
 
 function draw() {
-  background("gray");
+  background("#fff");
 
   grids.forEach(grid => grid.forEach(line => line.draw()));
 }
@@ -149,7 +216,6 @@ class Grid {
     noStroke();
     fill("black");
 
-    this.points.forEach(p => p.draw())
     if (this.letter !== "") {
       const rules = letterRules[`${this.letter}`]
       for (let rule of rules) {
@@ -176,10 +242,6 @@ class Point {
     this.y = y;
     this.z = z;
     this.label = label;
-  }
-
-  draw() {
-    circle(this.x, this.y, radius)
   }
 }
 
