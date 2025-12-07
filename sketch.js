@@ -139,6 +139,7 @@ function setup() {
 
 function draw() {
   background("#fff");
+  orbitControl();
 
   grids.forEach(grid => grid.forEach(line => line.draw()));
 
