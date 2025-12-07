@@ -5,7 +5,7 @@ const typeStartX = -(width / 2);
 const typeStartY = -(height / 2);
 const grids = [[]];
 let currentLine = grids[grids.length - 1];
-const gridSize = 86;
+const gridSize = 42;
 let cursor = false;
 let zPoints = ["p1", "p5", "p6"]
 
