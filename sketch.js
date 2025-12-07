@@ -126,12 +126,13 @@ class Grid {
     if (this.letter !== "") {
       const rules = letterRules[`${this.letter}`]
       for (let rule of rules) {
-        const startPoint = this.points.find(p => p.label === rule.start)
-        const endPoint = this.points.find(p => p.label === rule.end)
+        const startPoint = this.points.find((p) => p.label === rule.start);
+        const endPoint = this.points.find((p) => p.label === rule.end);
 
         strokeWeight(1);
         stroke("black");
-        line(startPoint.x, startPoint.y, startPoint.z, endPoint.x, endPoint.y, endPoint.z)
+        // line(startPoint.x, startPoint.y, startPoint.z, endPoint.x, endPoint.y, endPoint.z)
+        line(startPoint.x, startPoint.y, endPoint.x, endPoint.y) // no z axis for debugging.
       }
     }
   }
