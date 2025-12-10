@@ -19,19 +19,29 @@ let xAngle = 0;
 let cursorX = typeStartX + ((gridSize) + 5) * (1 + currentLine.length) + 10;
 let cursorY = typeStartY + gridSize;
 
+let cam;
+
 function setup() {
   createCanvas(width, height, WEBGL);
 
   angleMode(DEGREES);
+
+  cam = createCamera();
+  cam.setPosition(0, 0, 1600);
 }
 
 function draw() {
   background("#fff");
 
-
   push();
-  rotateX(xAngle);
-  rotateY(yAngle);
+
+  if (axis > 0) {
+    if (axis < 1) {
+      rotateX(-angleInc);
+    } else if (axis < 2) {
+      rotateX(-angleInc);
+    }
+  }
 
   lines.forEach((line, lineIndx) => line.forEach((letter, letterIndx) => letter.draw(lineIndx === lines.length - 1 && letterIndx === line.length - 1)));
   pop();
