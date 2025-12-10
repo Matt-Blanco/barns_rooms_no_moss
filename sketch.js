@@ -27,7 +27,7 @@ function setup() {
   angleMode(DEGREES);
 
   cam = createCamera();
-  cam.setPosition(0, 0, 1600);
+  cam.setPosition(0, 0, 800);
 }
 
 function draw() {
@@ -35,13 +35,14 @@ function draw() {
 
   push();
 
-  if (axis > 0) {
-    if (axis < 1) {
-      rotateX(-angleInc);
-    } else if (axis < 2) {
-      rotateX(-angleInc);
-    }
-  }
+  // Part 03: Enable canvas rotation
+  // if (axis > 0) {
+  //   if (axis < 1) {
+  //     rotateX(-angleInc);
+  //   } else if (axis < 2) {
+  //     rotateX(-angleInc);
+  //   }
+  // }
 
   lines.forEach((line, lineIndx) => line.forEach((letter, letterIndx) => letter.draw(lineIndx === lines.length - 1 && letterIndx === line.length - 1)));
   pop();
@@ -98,7 +99,10 @@ function keyPressed(e) {
 
     canvasAngle += angleInc;
     zPoints = getZPoints();
-    axis = random(3);
+
+    // Part 02: Enable the rotation axis to change
+    // axis = random(3);
+    axis = 0;
 
     x = x * cos(canvasAngle) - y * sin(canvasAngle);
     y = x * sin(canvasAngle) + y * cos(canvasAngle);
@@ -153,33 +157,34 @@ class Grid {
   }
 
   draw(isLast) {
-    push();
-    if (this.axis > 0) {
-      if (this.axis < 1) {
-        rotateY(angleInc);
-      }
-      else if (this.axis < 2) {
-        rotateX(angleInc);
-      }
-    }
+    // Part 0: Drawing the grid of each letter
+    this.points.forEach((p) => p.draw());
 
-    // Part 1: Drawing the grid of each letter
-    // this.points.forEach((p) => p.draw());
+    // Part 02: Enable word rotation
+    // push();
+    // if (this.axis > 0) {
+    //   if (this.axis < 1) {
+    //     rotateY(angleInc);
+    //   }
+    //   else if (this.axis < 2) {
+    //     rotateX(angleInc);
+    //   }
+    // }
 
-    // Part 2: Drawing the stroke of each letter
-    if (this.letter !== "") {
-      const rules = letterRules[`${this.letter}`];
-      for (let rule of rules) {
-        const startPoint = this.points.find((p) => p.label === rule.start);
-        const endPoint = this.points.find((p) => p.label === rule.end);
+    // // Part 01: Drawing the stroke of each letter
+    // if (this.letter !== "") {
+    //   const rules = letterRules[`${this.letter}`];
+    //   for (let rule of rules) {
+    //     const startPoint = this.points.find((p) => p.label === rule.start);
+    //     const endPoint = this.points.find((p) => p.label === rule.end);
 
-        strokeWeight(2);
-        stroke("black");
-        // Part 3: Letters in space... in space
-        // line(startPoint.x, startPoint.y, startPoint.z, endPoint.x, endPoint.y, endPoint.z)
-        line(startPoint.x, startPoint.y, endPoint.x, endPoint.y); // no z axis for debugging.
-      }
-    }
+    //     strokeWeight(2);
+    //     stroke("black");
+    //     // Part 01B: Letters in space... in space
+    //     // line(startPoint.x, startPoint.y, startPoint.z, endPoint.x, endPoint.y, endPoint.z)
+    //     line(startPoint.x, startPoint.y, endPoint.x, endPoint.y); // no z axis for debugging.
+    //   }
+    // }
 
     if (isLast && cursor) {
       line(this.startX + gridSize + 10, this.startY, this.startX + gridSize + 10, this.startY + gridSize);
@@ -189,6 +194,7 @@ class Grid {
 }
 
 const radius = 2;
+
 class Point {
   x;
   y;
@@ -204,7 +210,7 @@ class Point {
 
   draw() {
     fill("gray");
-    circle(this.x, this.y, 2)
+    circle(this.x, this.y, radius)
   }
 }
 
