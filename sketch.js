@@ -27,7 +27,7 @@ function setup() {
   angleMode(DEGREES);
 
   cam = createCamera();
-  cam.setPosition(0, 0, 1600);
+  cam.setPosition(0, 0, 800);
 }
 
 function draw() {
