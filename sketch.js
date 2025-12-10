@@ -28,7 +28,13 @@ function setup() {
 function draw() {
   background("#fff");
 
+
+  push();
+  rotateX(xAngle);
+  rotateY(yAngle);
+
   lines.forEach((line, lineIndx) => line.forEach((letter, letterIndx) => letter.draw(lineIndx === lines.length - 1 && letterIndx === line.length - 1)));
+  pop();
 
   if (frameCount % 25 === 0) {
     cursor = !cursor;
@@ -84,7 +90,6 @@ function keyPressed(e) {
     zPoints = getZPoints();
     axis = random(3);
 
-    // Moddify the x and y point based on the type of rotation
     x = x * cos(canvasAngle) - y * sin(canvasAngle);
     y = x * sin(canvasAngle) + y * cos(canvasAngle);
 
@@ -100,10 +105,6 @@ function keyPressed(e) {
   } else {
     currentLine.push(new Grid(x, y, axis, ''))
   }
-}
-
-function getZPoints() {
-  return Array.apply(null, Array(Math.ceil(Math.random() * 8))).map((_, i) => `p${Math.floor(Math.random() * 9)}`)
 }
 
 class Grid {
@@ -143,7 +144,7 @@ class Grid {
 
   draw(isLast) {
     push();
-    if (axis > 0) {
+    if (this.axis > 0) {
       if (this.axis < 1) {
         rotateY(angleInc);
       }
@@ -152,17 +153,19 @@ class Grid {
       }
     }
 
-    noStroke();
-    fill("black");
+    // Part 1: Drawing the grid of each letter
+    // this.points.forEach((p) => p.draw());
 
+    // Part 2: Drawing the stroke of each letter
     if (this.letter !== "") {
       const rules = letterRules[`${this.letter}`];
       for (let rule of rules) {
         const startPoint = this.points.find((p) => p.label === rule.start);
         const endPoint = this.points.find((p) => p.label === rule.end);
 
-        strokeWeight(1);
+        strokeWeight(2);
         stroke("black");
+        // Part 3: Letters in space... in space
         // line(startPoint.x, startPoint.y, startPoint.z, endPoint.x, endPoint.y, endPoint.z)
         line(startPoint.x, startPoint.y, endPoint.x, endPoint.y); // no z axis for debugging.
       }
@@ -188,4 +191,13 @@ class Point {
     this.z = z;
     this.label = label;
   }
+
+  draw() {
+    fill("gray");
+    circle(this.x, this.y, 2)
+  }
+}
+
+function getZPoints() {
+  return Array.apply(null, Array(Math.ceil(Math.random() * 8))).map((_, i) => `p${Math.floor(Math.random() * 9)}`)
 }
