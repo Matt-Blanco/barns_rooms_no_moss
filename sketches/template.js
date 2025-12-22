@@ -1,6 +1,7 @@
 /*
-title: 
+what: 
 date: 
+author: arjun
 
 thought(s):
 */
