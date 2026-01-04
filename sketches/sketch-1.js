@@ -29,7 +29,7 @@ function setup() {
   createCanvas(c_size, c_size, WEBGL);
 
   //set defaults:
-  textFont (font); 
+  textFont(font);
   textSize(16);
   noStroke();
   fill(0);
@@ -41,55 +41,49 @@ function draw() {
   //global translate for all drawing operations.
   translate(-width / 2, -height / 2, 0);
 
-  indicator({});
-
   for (let word of words) {
     word.display();
   }
+
+  //also show it.  (moved from keyPressed; drawing must happen every frame)
+  let baseX = words.length < 1 ? margin : words[words.length - 1].x + words[words.length - 1].tw + t_size / 2;
+
+  let baseY = margin;
+
+  fill(190);
+  text(str, baseX, baseY);
+
+  indicator({
+    x: baseX + textWidth(str),
+    y: baseY,
+  });
 }
 
 //function to draw indicator when typing.
-let indicator_x = 0;
-let indicator_y = 0;
-
-function indicator({ w = 1, h = t_size, op = 0 }) {
-  if (words.length < 1) {
-    indicator_x = margin;
-    indicator_y = margin;
-  } else {
-    let last = words[words.length - 1];
-    indicator_x = last.x + last.tw + t_size / 2;
-    indicator_y = margin;
-  }
-
+function indicator({ x = margin, y = margin, w = 1, h = t_size } = {}) {
   //make it blink.
-  op = 128 + 127 * sin(frameCount * 0.05);
+  let op = 128 + 127 * sin(frameCount * 0.05);
 
   fill(0, op);
-  rect(indicator_x, indicator_y, w, h);
+  rect(x, y-h*0.8, w, h);
 }
 
 function keyPressed() {
   //every time a key is pressed, accumulate a string.
 
-  if (key !== " ") {
+  if (key === " ") {
+    //you have to push a new object.
+    if (str.length > 0) {
+      let x = words.length < 1 ? margin : words[words.length - 1].x + words[words.length - 1].tw + t_size / 2;
+
+      words.push(new Word(str, x, margin));
+
+      //reset accumulator string.
+      str = "";
+    }
+  } else if (key.length === 1) {
     //accumulate it.
     str += key;
-
-    //update indicator position: 
-    indicator_x+=textWidth(str)+ 10;
-
-    //also show it. 
-    fill (190); 
-    text (str, indicator_x, indicator_y)
-  } else if (key === " ") {
-    //you have to push a new object.
-    let x, y;
-
-    words.length < 1 ? words.push(new Word(str, margin, margin)) : words.push(new Word(str, words[words.length - 1].x + words[words.length - 1].tw + t_size / 2, margin));
-
-    //reset accumulator string.
-    str = "";
   }
 }
 
@@ -107,7 +101,7 @@ class Word {
 
     push();
     //translation necessary for z-dimension.
-    translate (0,0,0); 
+    translate(0, 0, 0);
     text(this.str, this.x, this.y);
     pop();
   }
