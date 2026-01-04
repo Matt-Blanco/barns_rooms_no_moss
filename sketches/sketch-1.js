@@ -58,8 +58,8 @@ function indicator({ w = 1, h = t_size, op = 0 }) {
     indicator_y = margin;
   } else {
     let last = words[words.length - 1];
-    indicator_x = last.x + t_size / 2;
-    indicator_y = last.y + t_size / 2;
+    indicator_x = last.x + last.tw + t_size / 2;
+    indicator_y = margin;
   }
 
   //make it blink.
@@ -75,6 +75,13 @@ function keyPressed() {
   if (key !== " ") {
     //accumulate it.
     str += key;
+
+    //update indicator position: 
+    indicator_x+=textWidth(str)+ 10;
+
+    //also show it. 
+    fill (190); 
+    text (str, indicator_x, indicator_y)
   } else if (key === " ") {
     //you have to push a new object.
     let x, y;
