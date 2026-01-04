@@ -21,6 +21,10 @@ let font;
 //we always draw on a square canvas for now; so as to have a cube.
 const c_size = 1000;
 
+//variables to store current x & y positions.
+let base_x = margin; 
+let base_y = margin; 
+
 function preload() {
   font = loadFont("../assets/CrimsonText-Regular.ttf");
 }
@@ -45,17 +49,15 @@ function draw() {
     word.display();
   }
 
-  //also show it.  (moved from keyPressed; drawing must happen every frame)
-  let baseX = words.length < 1 ? margin : words[words.length - 1].x + words[words.length - 1].tw + t_size / 2;
-
-  let baseY = margin;
+  //also, when being typed, show what is being typed.
+  base_x = words.length < 1 ? margin : words[words.length - 1].x + words[words.length - 1].tw + t_size / 2;
 
   fill(190);
-  text(str, baseX, baseY);
+  text(str, base_x, base_y);
 
   indicator({
-    x: baseX + textWidth(str),
-    y: baseY,
+    x: base_x + textWidth(str),
+    y: base_y,
   });
 }
 
@@ -71,12 +73,20 @@ function indicator({ x = margin, y = margin, w = 1, h = t_size } = {}) {
 function keyPressed() {
   //every time a key is pressed, accumulate a string.
 
+  if (keyCode === ENTER) {
+    //move to next line
+    base_y += leading;
+    base_x = margin;
+    return;
+  }
+
   if (key === " ") {
     //you have to push a new object.
     if (str.length > 0) {
-      let x = words.length < 1 ? margin : words[words.length - 1].x + words[words.length - 1].tw + t_size / 2;
+      words.push(new Word(str, base_x, base_y));
 
-      words.push(new Word(str, x, margin));
+      //advance x position after committing word
+      base_x += textWidth(str) + t_size / 2;
 
       //reset accumulator string.
       str = "";
@@ -86,6 +96,7 @@ function keyPressed() {
     str += key;
   }
 }
+  
 
 class Word {
   constructor(str, x, y) {
