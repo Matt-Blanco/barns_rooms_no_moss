@@ -32,6 +32,9 @@ function preload() {
 function setup() {
   createCanvas(c_size, c_size, WEBGL);
 
+  base_x = width/2; 
+  base_y = height/2;
+
   //set defaults:
   textFont(font);
   textSize(16);
@@ -52,7 +55,7 @@ function draw() {
   }
 
   //also, when being typed, show what is being typed.
-  base_x = words.length < 1 ? margin : words[words.length - 1].x + words[words.length - 1].tw + t_size / 2;
+  base_x = words.length < 1 ? width/2 : words[words.length - 1].x + words[words.length - 1].tw + t_size / 2;
 
   fill(190);
   text(str, base_x, base_y);
