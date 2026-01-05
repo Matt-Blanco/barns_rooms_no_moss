@@ -22,8 +22,8 @@ let font;
 const c_size = 1000;
 
 //variables to store current x & y positions.
-let base_x = margin; 
-let base_y = margin; 
+let base_x = margin;
+let base_y = margin;
 
 function preload() {
   font = loadFont("../assets/CrimsonText-Regular.ttf");
@@ -41,6 +41,8 @@ function setup() {
 
 function draw() {
   background(255);
+  //orbit control: 
+    orbitControl();
 
   //global translate for all drawing operations.
   translate(-width / 2, -height / 2, 0);
@@ -59,6 +61,7 @@ function draw() {
     x: base_x + textWidth(str),
     y: base_y,
   });
+
 }
 
 //function to draw indicator when typing.
@@ -67,7 +70,7 @@ function indicator({ x = margin, y = margin, w = 1, h = t_size } = {}) {
   let op = 128 + 127 * sin(frameCount * 0.05);
 
   fill(0, op);
-  rect(x, y-h*0.8, w, h);
+  rect(x, y - h * 0.8, w, h);
 }
 
 function keyPressed() {
@@ -96,7 +99,6 @@ function keyPressed() {
     str += key;
   }
 }
-  
 
 class Word {
   constructor(str, x, y) {
