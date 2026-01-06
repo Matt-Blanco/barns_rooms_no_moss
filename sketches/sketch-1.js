@@ -28,6 +28,10 @@ let base_y = margin;
 //rotation bookkeeping
 let rotationStep = 0;
 
+//cursor rotation state (stored, not boolean)
+let cursorAxis = "x";
+let cursorAngle = 0;
+
 function preload() {
   font = loadFont("../assets/CrimsonText-Regular.ttf");
 }
@@ -69,11 +73,9 @@ function draw() {
   push();
   translate(base_x + textWidth(str), base_y, 0);
 
-  if (rotationStep % 2 === 0) {
-    rotateX(HALF_PI);
-  } else {
-    rotateY(HALF_PI);
-  }
+  if (cursorAxis === "x") rotateX(cursorAngle);
+  if (cursorAxis === "y") rotateY(cursorAngle);
+  if (cursorAxis === "z") rotateZ(cursorAngle);
 
   indicator({ x: 0, y: 0 });
   pop();
@@ -101,11 +103,15 @@ function keyPressed() {
   if (key === " ") {
     //you have to push a new object.
     if (str.length > 0) {
-      //alternate rotation axis every word
-      let axis = rotationStep % 2 === 0 ? "x" : "y";
+      //choose a rotation axis for this word
+      let axis = random(["x", "y", "z"]);
       let angle = HALF_PI; //90 degrees
 
       words.push(new Word(str, base_x, base_y, 0, axis, angle));
+
+      //cursor should match last committed word
+      cursorAxis = axis;
+      cursorAngle = angle;
 
       //advance x position after committing word
       base_x += textWidth(str) + t_size / 2;
@@ -141,11 +147,9 @@ class Word {
     //translation necessary for z-dimension.
     translate(this.x, this.y, this.z);
 
-    if (this.axis === "x") {
-      rotateX(this.angle);
-    } else if (this.axis === "y") {
-      rotateY(this.angle);
-    }
+    if (this.axis === "x") rotateX(this.angle);
+    if (this.axis === "y") rotateY(this.angle);
+    if (this.axis === "z") rotateZ(this.angle);
 
     text(this.str, 0, 0);
     pop();
