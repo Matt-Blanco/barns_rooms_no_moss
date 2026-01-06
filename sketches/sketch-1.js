@@ -1,9 +1,10 @@
 /*
-what: 
-date: 
+what: spatial representation of text. 
+date: jan 6th, 2025.
 author: arjun
 
 thought(s):
+it creates new meaning out of what is produced. however, meaning-making must be aided. this should happen by some automation of orbit control — move it x degrees or something. 
 */
 
 let str = "";
@@ -32,6 +33,9 @@ let rotationStep = 0;
 let cursorAxis = "x";
 let cursorAngle = 0;
 
+let canvas_hor_angle = 0;
+let canvas_vert_angle = 0;
+
 function preload() {
   font = loadFont("../assets/CrimsonText-Regular.ttf");
 }
@@ -56,6 +60,8 @@ function draw() {
   orbitControl();
 
   //global translate for all drawing operations.
+  rotateX(canvas_hor_angle);
+  rotateY(canvas_vert_angle);
   translate(-width / 2, -height / 2, 0);
 
   //draw committed words
@@ -93,14 +99,27 @@ function indicator({ x = margin, y = margin, w = 1, h = t_size } = {}) {
 function keyPressed() {
   //every time a key is pressed, accumulate a string.
 
+  //rotation:
+  if (keyCode === RIGHT_ARROW) {
+    canvas_vert_angle += HALF_PI;
+    return;
+  } else if (keyCode === LEFT_ARROW) {
+    canvas_vert_angle -= HALF_PI;
+    return;
+  } else if (keyCode === UP_ARROW) {
+    canvas_hor_angle -= HALF_PI;
+    return;
+  } else if (keyCode === DOWN_ARROW) {
+    canvas_hor_angle += HALF_PI;
+    return;
+  }
+
   if (keyCode === ENTER) {
     //move to next line
     base_y += leading;
     base_x = margin;
     return;
-  }
-
-  if (key === " ") {
+  } else if (key === " ") {
     //you have to push a new object.
     if (str.length > 0) {
       //choose a rotation axis for this word
